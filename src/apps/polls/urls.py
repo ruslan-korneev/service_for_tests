@@ -1,7 +1,7 @@
 from django.urls import path
-from apps.polls.views import PollsList
+from apps.polls.views import QuestionList
 
 
 urlpatterns = [
-    path('', PollsList.as_view(), name='polls'),
+    path('', QuestionList.as_view(), name='questions'),
 ]

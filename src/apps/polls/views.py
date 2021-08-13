@@ -1,11 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic.list import ListView
-from apps.polls.models import Answer
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
+from django.urls import reverse_lazy
+
+from apps.polls.models import Answer, Question, Result
+
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 
 
-class PollsList(ListView):
-#    reply = 'Polls:'
-#    for question in Question.objects.all():
-#        reply += f'\n  {question.title}'
-#    return HttpResponse(reply)
-    model = Answer
+class QuestionList(ListView):
+    model = Question
+    paginate_by = 1
