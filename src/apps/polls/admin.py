@@ -1,19 +1,29 @@
 from django.contrib import admin
-from .models import Question, Answer, Choice
-
-
-@admin.register(Question)
-class QuestionAdmin(admin.ModelAdmin):
-    list_display = ('title', 'visible', 'max_points',)
-
-
-@admin.register(Choice)
-class ChoiceAdmin(admin.ModelAdmin):
-    list_display = ('title', 'question', 'points', 'lock_other',)
-    list_filter = ('question',)
+from apps.polls.models import Answer, Choice, Question, Result, RightChoice
 
 
 @admin.register(Answer)
 class AnswerAdmin(admin.ModelAdmin):
-    list_display = ('user', 'question', 'choice',)
-    list_filter = ('user',)
+    list_display = ('user', '__str__', 'points',)
+    list_filter = ('points',)
+
+
+@admin.register(Choice)
+class ChoiceAdmin(admin.ModelAdmin):
+    list_display = ('__str__',)
+
+
+@admin.register(Question)
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'get_correct_answers', 'points',)
+
+
+@admin.register(Result)
+class ResultAdmin(admin.ModelAdmin):
+    list_display = ('__str__',)
+    list_filter = ('points_earned',)
+
+
+@admin.register(RightChoice)
+class RightChoiceAdmin(admin.ModelAdmin):
+    list_display = ('__str__',)
