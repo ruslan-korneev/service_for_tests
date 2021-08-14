@@ -30,7 +30,7 @@ jobs:
       run: |
         # exit-zero treats all errors as warnings. The GitHub editor is 120 chars wide
         flake8 src/ --extend-exclude=.git,__pycache__,\
-        scripts,*.yml --max-complexity=10 --max-line-length=120
+        scripts,*.yml,migrations --max-complexity=10 --max-line-length=120
     - uses: actions/checkout@v1
     - name: Executing remote command
       uses: appleboy/ssh-action@master
