@@ -54,7 +54,10 @@ class Test(models.Model):
     questions = models.ManyToManyField(Question)
 
     def __str__(self):
-        return self.title
+        return f'{self.title} - {self.get_max_points()} баллов'
+
+    def get_max_points(self):
+        return sum(question.points for question in self.questions.all())
 
 
 class Answer(models.Model):
@@ -66,19 +69,14 @@ class Answer(models.Model):
            -баллы за вопрос - по умолчанию 0,
                  установка после создания объекта
     """
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, editable=False)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     question = models.ForeignKey(Question, on_delete=models.DO_NOTHING)
     choice = models.ManyToManyField(Choice)
     points = models.FloatField(default=0, editable=False)
 
     def __str__(self):
         choices = self.get_choices_titles()
-        if len(choices) > 1:
-            reply = f'Вопрос: {self.question.title}\nОтветы:'
-            for choice in choices:
-                reply += f'\n{choice}'
-            return reply
-        return f'Вопрос: {self.question.title}\nОтвет: {choices[0].title}'
+        return f'Вопрос: {self.question.title}\nОтвет: {choices[0]}'
 
     def get_choices_titles(self):
         return [choice.title for choice in self.choice.all()]
