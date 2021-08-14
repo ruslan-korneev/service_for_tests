@@ -1,0 +1,19 @@
+{% if request.user.is_authenticated %}
+    <p> {{request.user}} </p>
+    <a href="{% url 'logout' %}">Выйти</a>
+{% else %}
+    <a href="{% url 'login' %}">Войти</a>
+{% endif %}
+<hr>
+<h1>Тесты</h1>
+<hr>
+<table>
+  {% for test in tests %}
+  <tr>
+    <th>
+    <h4><a href="{% url 'test' test.id %}"> {{test.title}}</a></h4> <br>
+   </th>
+  </tr>
+  {% empty %}
+  {% endfor %}
+</table>
