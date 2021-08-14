@@ -1,0 +1,11 @@
+<h1>{{test}}</h1>
+<hr>
+{% for question in test.questions.all %}
+  {{question.title}} - {{question.points}} баллов <br>
+    <select>
+  {% for answer in question.answer_options.all %}
+      <option>{{answer.title}}</option>
+  {% endfor %}
+    </select> <hr>
+{% endfor %}
+<input type="button" value="Готово">
