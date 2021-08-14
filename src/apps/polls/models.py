@@ -1,21 +1,6 @@
 from django.db import models
+from django.db.models import Max
 from django.contrib.auth.models import User
-
-
-class RightChoice(models.Model):
-    """
-       Модель правильных ответов
-          -название
-    """
-    title = models.TextField()
-
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        db_table = 'right_choices'
-        verbose_name = 'Правильный Ответ'
-        verbose_name_plural = 'Правильные Ответы'
 
 
 class Choice(models.Model):
@@ -24,6 +9,7 @@ class Choice(models.Model):
           -название
     """
     title = models.TextField()
+    is_right = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
@@ -44,19 +30,32 @@ class Question(models.Model):
     """
     title = models.TextField()
     answer_options = models.ManyToManyField(Choice, related_name='answer_options')
-    correct_answer = models.ManyToManyField(RightChoice, related_name='correct_answer')
     points = models.FloatField(default=0)
 
     def __str__(self):
         return self.title
 
     def get_correct_answers(self):
-        return ' ,'.join([answer.title for answer in self.correct_answer.all()])
+        return ' ,'.join([answer.title for answer in self.answer_options.filter(is_right=True).all()])
 
     class Meta:
         ordering = ['points']
         verbose_name = 'Вопрос'
         verbose_name_plural = 'Вопросы'
+
+
+class Test(models.Model):
+    """
+        Модель Тестов
+          -название
+          -вопросы
+          -всего баллов
+    """
+    title = models.CharField(max_length=255)
+    questions = models.ManyToManyField(Question)
+
+    def __str__(self):
+        return self.title
 
 
 class Answer(models.Model):
