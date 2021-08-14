@@ -1,5 +1,11 @@
 from django.contrib import admin
-from apps.polls.models import Answer, Choice, Question, Result, RightChoice
+from apps.polls.models import (
+    Answer,
+    Choice,
+    Question,
+    Result,
+    Test,
+)
 
 
 @admin.register(Answer)
@@ -13,6 +19,10 @@ class ChoiceAdmin(admin.ModelAdmin):
     list_display = ('__str__',)
 
 
+class QuestionInline(admin.TabularInline):
+    model = Question
+
+
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'get_correct_answers', 'points',)
@@ -24,6 +34,7 @@ class ResultAdmin(admin.ModelAdmin):
     list_filter = ('points_earned',)
 
 
-@admin.register(RightChoice)
-class RightChoiceAdmin(admin.ModelAdmin):
+@admin.register(Test)
+class TestAdmin(admin.ModelAdmin):
     list_display = ('__str__',)
+#     inlines = [QuestionInline,]
