@@ -47,13 +47,11 @@ class Question(models.Model):
     correct_answer = models.ManyToManyField(RightChoice, related_name='correct_answer')
     points = models.FloatField(default=0)
 
-
     def __str__(self):
         return self.title
 
     def get_correct_answers(self):
-        return f' ,'.join([answer.title for answer in self.correct_answer.all()])
-
+        return ' ,'.join([answer.title for answer in self.correct_answer.all()])
 
     class Meta:
         ordering = ['points']
@@ -75,7 +73,6 @@ class Answer(models.Model):
     choice = models.ManyToManyField(Choice)
     points = models.FloatField(default=0, editable=False)
 
-
     def __str__(self):
         choices = self.get_choices_titles()
         if len(choices) > 1:
@@ -85,10 +82,8 @@ class Answer(models.Model):
             return reply
         return f'Вопрос: {self.question.title}\nОтвет: {choices[0].title}'
 
-
     def get_choices_titles(self):
         return [choice.title for choice in self.choice.all()]
-
 
     class Meta:
         ordering = ['user']
