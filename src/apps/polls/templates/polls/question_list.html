@@ -1,34 +1,25 @@
+{% if request.user.is_authenticated %}
+    <p> {{request.user}} </p>
+    <a href="{% url 'logout' %}">LogOut</a>
+{% else %}
+    <a href="{% url 'login' %}">LogIn</a>
+{% endif %}
+<hr>
 <h1>Questions</h1>
 
-<table>                                                       
-  {% for question in object_list %}
+<table>
+  {% for question in questions %}
   <tr>
     <th>
     <h4> {{question.title}}</h4> <br>
       <select>
             {% for answer in question.answer_options.all %}
-               <option> {{answer.title}}</option>
+               <option>{{answer.title}}</option>
             {% endfor %}
       </select>
-   <p><input type="submit" value="Выбрать"></p>
    </th>
-  </tr>                                                                             
+  </tr>
   {% empty %}
   {% endfor %}
 </table>
-
-{% if is_paginated %}
-  <div class="pagination">
-    <span class="page-links">
-      {% if page_obj.has_previous %}
-        <a href="{{request.path}}?page={{page_obj.previous_page_number}}">Предыдущая</a>
-      {% endif %}
-      <span>
-        Страница {{ page_obj.number }}/{{page_obj.paginator.num_pages}}
-      </span>
-      {% if page_obj.has_next %}
-        <a href="{{request.path}}?page={{page_obj.next_page_number}}">Следующая</a>
-      {% endif %}
-    </span>
-  </div>
-{% endif %}
+<p><input type="submit" value="Выбрать"></p>
