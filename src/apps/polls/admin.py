@@ -11,16 +11,12 @@ from apps.polls.models import (
 @admin.register(Answer)
 class AnswerAdmin(admin.ModelAdmin):
     list_display = ('user', '__str__', 'points',)
-    list_filter = ('points',)
+    list_filter = ('user', 'question',)
 
 
 @admin.register(Choice)
 class ChoiceAdmin(admin.ModelAdmin):
     list_display = ('__str__',)
-
-
-class QuestionInline(admin.TabularInline):
-    model = Question
 
 
 @admin.register(Question)
@@ -31,10 +27,9 @@ class QuestionAdmin(admin.ModelAdmin):
 @admin.register(Result)
 class ResultAdmin(admin.ModelAdmin):
     list_display = ('__str__',)
-    list_filter = ('points_earned',)
+    list_filter = ('user',)
 
 
 @admin.register(Test)
 class TestAdmin(admin.ModelAdmin):
     list_display = ('__str__',)
-#     inlines = [QuestionInline,]

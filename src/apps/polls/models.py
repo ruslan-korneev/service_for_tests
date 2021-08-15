@@ -53,11 +53,16 @@ class Test(models.Model):
     title = models.CharField(max_length=255)
     questions = models.ManyToManyField(Question)
 
-    def __str__(self):
-        return f'{self.title} - {self.get_max_points()} баллов'
-
-    def get_max_points(self):
+    @property
+    def max_points(self):
         return sum(question.points for question in self.questions.all())
+
+    def __str__(self):
+        return f'{self.title} - {self.max_points} баллов'
+
+    class Meta:
+        verbose_name = 'Тест'
+        verbose_name_plural = 'Тесты'
 
 
 class Answer(models.Model):
@@ -72,14 +77,21 @@ class Answer(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     question = models.ForeignKey(Question, on_delete=models.DO_NOTHING)
     choice = models.ManyToManyField(Choice)
-    points = models.FloatField(default=0, editable=False)
 
     def __str__(self):
-        choices = self.get_choices_titles()
-        return f'Вопрос: {self.question.title}\nОтвет: {choices[0]}'
+        # choices = self.get_choices_titles()
+        # return f'Вопрос: {self.question.title}\nОтвет: {choices[0]}'
+        return f'{self.question} | {self.get_choice_title()}'
 
-    def get_choices_titles(self):
-        return [choice.title for choice in self.choice.all()]
+    def get_choice_title(self):
+        return self.choice.all()[0].title
+
+    @property
+    def points(self):
+        if [choice.is_right for choice in self.choice.all()][0]:
+            return self.question.points
+        else:
+            return 0.0
 
     class Meta:
         ordering = ['user']
@@ -96,16 +108,34 @@ class Result(models.Model):
             -набранные баллы
             -максимум баллов
     """
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, editable=False)
-    quantity_of_question = models.IntegerField(editable=False)
-    points_earned = models.FloatField(editable=False)
-    max_points = models.FloatField(editable=False)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    test = models.ManyToManyField(Test)
+
+    def answers(self):
+         test = self.test.all()[0]                                     # NOQA[E111, E117]
+         return [                                                      # NOQA[E111]
+             answer
+             for answer in Answer.objects.filter(
+                 user=self.user, question__in=[                        # NOQA[E111]
+                     question for question in test.questions.all()])]
+
+    @property
+    def points_earned(self):
+        earned_points = sum(answer.points for answer in self.answers())
+        return round(earned_points, 2)
+
+    @property
+    def max_points(self):
+        return round(sum(test.max_points for test in self.test.all()), 2)
 
     def __str__(self):
-        return f'{self.user} - {self.points_earned}/{self.max_points} - {self.get_in_perc}%'
+        return f'{self.user} | {self.get_test()}  | {self.points_earned}/{self.max_points} | {self.get_in_perc()}%'
 
     def get_in_perc(self):
-        return self.points_earned * 100 / self.max_points
+        return round((self.points_earned * 100 / self.max_points), 2)
+
+    def get_test(self):
+        return self.test.all()[0].title
 
     class Meta:
         ordering = ['user']
