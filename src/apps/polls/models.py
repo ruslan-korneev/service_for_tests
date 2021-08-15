@@ -110,16 +110,20 @@ class Result(models.Model):
     """
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     test = models.ManyToManyField(Test)
-    
+
     def answers(self):
-         test = self.test.all()[0]
-         return [answer for answer in Answer.objects.filter(user=self.user, question__in=[question for question in test.questions.all()])]
+         test = self.test.all()[0]  # NOQA[E111, E117]
+         return [
+             answer
+             for answer in Answer.objects.filter(
+                 user=self.user, question__in=[  # NOQA[E111]
+                     question for question in test.questions.all()])]
 
     @property
     def points_earned(self):
         earned_points = sum(answer.points for answer in self.answers())
         return round(earned_points, 2)
-    
+
     @property
     def max_points(self):
         return round(sum(test.max_points for test in self.test.all()), 2)
