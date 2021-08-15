@@ -112,11 +112,11 @@ class Result(models.Model):
     test = models.ManyToManyField(Test)
 
     def answers(self):
-         test = self.test.all()[0]  # NOQA[E111, E117]
-         return [
+         test = self.test.all()[0]                                     # NOQA[E111, E117]
+         return [                                                      # NOQA[E111]
              answer
              for answer in Answer.objects.filter(
-                 user=self.user, question__in=[  # NOQA[E111]
+                 user=self.user, question__in=[                        # NOQA[E111]
                      question for question in test.questions.all()])]
 
     @property
